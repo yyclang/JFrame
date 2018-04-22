@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/blue500"
+    >
+
+    <ImageView
+        android:id="@+id/iv_pic"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:src="@mipmap/ic_launcher_round"
+        />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="20dp"
+        android:textColor="@color/white"
+        android:text="          这是一个简单的fragment。JFrame是为了让安卓框架搭建更加简单，让程序员把更多的精力放在逻辑上。
+        如果想让RecycleView更简单的丰富可以查看我的简书https://www.jianshu.com/u/9dfaf364d57f。"
+        />
+
+</LinearLayout>
