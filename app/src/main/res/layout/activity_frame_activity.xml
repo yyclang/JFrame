@@ -18,6 +18,13 @@
                 style="@style/ItemRoundStyle"
                 android:text="普通Fragment" />
 
+            <CheckBox
+                android:id="@+id/checkbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="是否开启懒加载"
+                />
+
             <TextView
                 android:id="@+id/tv_lazy"
                 style="@style/ItemRoundStyle"
@@ -32,6 +39,11 @@
                 android:id="@+id/tv_load_more"
                 style="@style/ItemRoundStyle"
                 android:text="LoadMore封装" />
+
+            <TextView
+                android:id="@+id/tv_load_more_view_pager"
+                style="@style/ItemRoundStyle"
+                android:text="LoadMore_ViewPager" />
 
         </LinearLayout>
 

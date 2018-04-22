@@ -23,11 +23,26 @@ public class LoadMoreTestFragment extends JLoadMoreFragment {
     private int count = 1;
     private int mLength = 20;
 
+    private int position;
+    private boolean checked;
+
     private Handler mHandler = new MyHandler(this);
+
+    public static LoadMoreTestFragment newInstance(int position, boolean checked) {
+        LoadMoreTestFragment loadMoreTestFragment = new LoadMoreTestFragment();
+
+        Bundle bundle = new Bundle();
+        bundle.putInt("position", position);
+        bundle.putBoolean("checked", checked);
+
+        loadMoreTestFragment.initArgs(bundle);
+        return loadMoreTestFragment;
+    }
 
     @Override
     protected void initArgs(Bundle arguments) {
-
+        position = arguments.getInt("position");
+        checked = arguments.getBoolean("checked");
     }
 
     @Override
@@ -47,9 +62,19 @@ public class LoadMoreTestFragment extends JLoadMoreFragment {
     }
 
     @Override
+    protected boolean isLazyLoad() {
+        return checked;
+    }
+
+    @Override
+    protected boolean requestLoadMore() {
+        return false;
+    }
+
+    @Override
     public void getLoadMoreData() {
         for (int i = 0; i < 20; ++i) {
-            data.add("zinc Power" + (count + i));
+            data.add(position + " zinc Power" + (count + i));
         }
 
         count = count + 20;
@@ -62,7 +87,7 @@ public class LoadMoreTestFragment extends JLoadMoreFragment {
         this.data.clear();
         count = 1;
         for (; count <= mLength; ++count) {
-            data.add("zinc Power" + count);
+            data.add(position + " zinc Power" + count);
         }
     }
 

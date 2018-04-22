@@ -36,7 +36,7 @@ public class ListTestFragment extends JListFragment {
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                switch (testTag){
+                switch (testTag) {
                     case 0:
                         mAdapter.onEmpty();
                         break;
@@ -48,6 +48,7 @@ public class ListTestFragment extends JListFragment {
                         mAdapter.onSuccess();
                         break;
                 }
+                ++testTag;
             }
         }, 2000);
 

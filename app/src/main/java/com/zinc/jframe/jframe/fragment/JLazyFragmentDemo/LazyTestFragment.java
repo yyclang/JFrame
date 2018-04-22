@@ -21,17 +21,19 @@ import com.zinc.libjframe.view.fragment.JLazyFragment;
 public class LazyTestFragment extends JLazyFragment {
 
     private int page;
+    private boolean checked;
 
     private TextView tv_state_show;
     private TextView tv_page;
 
     private Handler myHandler = new MyHandler(this);
 
-    public static LazyTestFragment newInstance(int page) {
+    public static LazyTestFragment newInstance(int page, boolean checked) {
         LazyTestFragment lazyTestFragment = new LazyTestFragment();
 
         Bundle bundle = new Bundle();
         bundle.putInt("page", page);
+        bundle.putBoolean("checked", checked);
 
         lazyTestFragment.setArguments(bundle);
         return lazyTestFragment;
@@ -41,6 +43,7 @@ public class LazyTestFragment extends JLazyFragment {
     protected void initArgs(Bundle arguments) {
         super.initArgs(arguments);
         page = arguments.getInt("page");
+        checked = arguments.getBoolean("checked");
     }
 
     @Override
@@ -53,6 +56,11 @@ public class LazyTestFragment extends JLazyFragment {
         tv_state_show = view.findViewById(R.id.tv_state_show);
         tv_page = view.findViewById(R.id.tv_page);
         tv_page.setText("第"+page+"页");
+    }
+
+    @Override
+    protected boolean isLazyLoad() {
+        return checked;
     }
 
     @Override

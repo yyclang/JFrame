@@ -37,8 +37,8 @@ public abstract class JListFragment extends JLazyFragment implements IStateListe
     @Override
     protected void initView(View view) {
         this.mRecycleView = view.findViewById(ID_RECYCLE_VIEW);
-        initRecycleView(this.mRecycleView);
-        setAdapter(getAdapter());
+        this.initRecycleView(this.mRecycleView);
+        this.setAdapter(getAdapter());
     }
 
     protected void initRecycleView(JRecycleView recycleView) {
@@ -83,7 +83,7 @@ public abstract class JListFragment extends JLazyFragment implements IStateListe
     protected void initData() {
         super.initData();
         this.mAdapter.onLoading();
-        getFirstData();
+        this.getFirstData();
     }
 
     @Override

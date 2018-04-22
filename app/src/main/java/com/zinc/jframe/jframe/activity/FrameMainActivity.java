@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.Checkable;
 import android.widget.TextView;
 
 import com.zinc.jframe.R;
@@ -24,6 +26,8 @@ public class FrameMainActivity extends JBaseActivity implements View.OnClickList
     private TextView tvList;
     private TextView tvLoadMore;
 
+    private CheckBox checkbox;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         JFrameManager.getInstance().setIsDebug(true);
@@ -43,10 +47,13 @@ public class FrameMainActivity extends JBaseActivity implements View.OnClickList
         tvList = (TextView) findViewById(R.id.tv_list);
         tvLoadMore = (TextView) findViewById(R.id.tv_load_more);
 
+        checkbox = (CheckBox) findViewById(R.id.checkbox);
+
         tvOrdinary.setOnClickListener(this);
         tvLazy.setOnClickListener(this);
         tvList.setOnClickListener(this);
         tvLoadMore.setOnClickListener(this);
+        findViewById(R.id.tv_load_more_view_pager).setOnClickListener(this);
     }
 
     @Override
@@ -57,6 +64,8 @@ public class FrameMainActivity extends JBaseActivity implements View.OnClickList
     @Override
     public void onClick(View v) {
         Intent intent = new Intent(this, FrameContainerActivity.class);
+        boolean checked = checkbox.isChecked();
+
         switch (v.getId()) {
 
             case R.id.tv_ordinary:
@@ -64,8 +73,10 @@ public class FrameMainActivity extends JBaseActivity implements View.OnClickList
                 break;
 
             case R.id.tv_lazy:
+
                 intent = new Intent(this, ViewPageActivity.class);
                 intent.putExtra("type", "lazy");
+                intent.putExtra("checked", checked);
                 break;
 
             case R.id.tv_list:
@@ -74,6 +85,12 @@ public class FrameMainActivity extends JBaseActivity implements View.OnClickList
 
             case R.id.tv_load_more:
                 intent.putExtra("type", "loadMore");
+                break;
+
+            case R.id.tv_load_more_view_pager:
+                intent = new Intent(this, ViewPageActivity.class);
+                intent.putExtra("type", "tv_load_more_view_pager");
+                intent.putExtra("checked", checked);
                 break;
         }
         startActivity(intent);

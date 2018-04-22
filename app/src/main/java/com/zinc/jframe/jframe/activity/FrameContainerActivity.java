@@ -40,7 +40,7 @@ public class FrameContainerActivity extends JBaseActivity {
                 addLayerFragment(ID_FRAME_LAYOUT_CONTAINER, new ListTestFragment());
                 break;
             case "loadMore":
-                addLayerFragment(ID_FRAME_LAYOUT_CONTAINER, new LoadMoreTestFragment());
+                addLayerFragment(ID_FRAME_LAYOUT_CONTAINER, LoadMoreTestFragment.newInstance(0, true));
                 break;
         }
     }

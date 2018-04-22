@@ -24,7 +24,7 @@ public class JFrameAdapter extends JRefreshAndLoadMoreAdapter {
     private final static int EMPTY_TYPE = 0xABC203;
     private final static int SUCCESS_TYPE = 0xABC204;
 
-    private int mCurrentType;
+    private int mCurrentType = LOADING_TYPE;
     private LayoutInflater mLayoutInflater;
 
     private IStateListener mStateListener;
@@ -130,6 +130,7 @@ public class JFrameAdapter extends JRefreshAndLoadMoreAdapter {
 
     public void onError() {
         this.mCurrentType = RETRY_TYPE;
+        super.notifyDataSetChanged();
     }
 
     public void onEmpty() {
