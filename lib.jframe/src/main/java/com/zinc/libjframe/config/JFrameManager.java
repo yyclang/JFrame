@@ -24,6 +24,8 @@ public class JFrameManager {
         this.mEmptyViewLayout = R.layout.j_state_empty_view;
 
         this.mDialogAnim = R.style.JFrameDialogDefaultAnim;
+
+        this.mToolbarLayout = R.layout.j_common_tool_bar;
     }
 
     //是否为debug模式
@@ -38,6 +40,9 @@ public class JFrameManager {
 
     //dialog的默认动画
     private int mDialogAnim;
+
+    //app的toolbar的layout
+    private int mToolbarLayout;
 
     public boolean isDebug() {
         return mIsDebug;
@@ -77,5 +82,13 @@ public class JFrameManager {
 
     public void setDialogAnim(int mDialogAnim) {
         this.mDialogAnim = mDialogAnim;
+    }
+
+    public int getToolbarLayout() {
+        return mToolbarLayout;
+    }
+
+    public void setToolbarLayout(int mToolbarLayout) {
+        this.mToolbarLayout = mToolbarLayout;
     }
 }

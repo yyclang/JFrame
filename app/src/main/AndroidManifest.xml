@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.zinc.jframe">
 
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -11,7 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar">
-        <activity android:name=".jframe.activity.FrameMainActivity">
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -20,7 +20,8 @@
         </activity>
         <activity android:name=".jframe.activity.FrameContainerActivity" />
         <activity android:name=".jframe.activity.ViewPageActivity" />
-        <!--<activity android:name=".jframe.FrameMainActivity" />-->
+        <activity android:name=".jframe.activity.ToolbarDemoActivity" />
+        <activity android:name=".jframe.activity.FragmentMainActivity" />
     </application>
 
 </manifest>

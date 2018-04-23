@@ -28,12 +28,12 @@ public class LoadMoreTestFragment extends JLoadMoreFragment {
 
     private Handler mHandler = new MyHandler(this);
 
-    public static LoadMoreTestFragment newInstance(int position, boolean checked) {
+    public static LoadMoreTestFragment newInstance(int position, boolean isLazy) {
         LoadMoreTestFragment loadMoreTestFragment = new LoadMoreTestFragment();
 
         Bundle bundle = new Bundle();
         bundle.putInt("position", position);
-        bundle.putBoolean("checked", checked);
+        bundle.putBoolean("checked", isLazy);
 
         loadMoreTestFragment.initArgs(bundle);
         return loadMoreTestFragment;
@@ -68,7 +68,8 @@ public class LoadMoreTestFragment extends JLoadMoreFragment {
 
     @Override
     protected boolean requestLoadMore() {
-        return false;
+        //是否需要加载更多
+        return true;
     }
 
     @Override

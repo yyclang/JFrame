@@ -23,7 +23,7 @@ import com.zinc.libjframe.view.fragment.dialog.JCommonLoadingFragment;
  * @description
  */
 
-public class FrameMainActivity extends JBaseActivity implements View.OnClickListener {
+public class FragmentMainActivity extends JBaseActivity implements View.OnClickListener {
 
     private TextView tvOrdinary;
     private TextView tvLazy;

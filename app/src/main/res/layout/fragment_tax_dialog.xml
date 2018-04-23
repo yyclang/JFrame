@@ -123,7 +123,6 @@
             android:id="@+id/tv_close"
             style="@style/ItemRoundStyle"
             android:layout_height="30dp"
-            android:background="@color/blue500"
             android:text="关闭"
             android:textColor="@color/white"
             android:textSize="12sp" />
