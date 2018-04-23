@@ -22,8 +22,8 @@
                 android:id="@+id/checkbox"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="是否开启懒加载"
-                />
+                android:checked="true"
+                android:text="是否开启懒加载" />
 
             <TextView
                 android:id="@+id/tv_lazy"
@@ -44,6 +44,37 @@
                 android:id="@+id/tv_load_more_view_pager"
                 style="@style/ItemRoundStyle"
                 android:text="LoadMore_ViewPager" />
+
+            <TextView
+                android:id="@+id/tv_loading_dialog"
+                style="@style/ItemRoundStyle"
+                android:text="loading_dialog" />
+
+            <CheckBox
+                android:id="@+id/cb_close_enable"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="开启dialog可关闭" />
+
+            <CheckBox
+                android:id="@+id/cb_anim"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="开启动画" />
+
+            <CheckBox
+                android:id="@+id/cb_myself_anim"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="使用自定义动画" />
+
+            <TextView
+                android:id="@+id/tv_tax"
+                style="@style/ItemRoundStyle"
+                android:text="缴税dialog" />
 
         </LinearLayout>
 

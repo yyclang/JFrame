@@ -19,7 +19,7 @@ import com.zinc.libjframe.callback.IStateListener;
 /**
  * @author Jiang zinc
  * @date 创建时间：2018/4/21
- * @description
+ * @description 带刷新的listFragment
  */
 
 public abstract class JListFragment extends JLazyFragment implements IStateListener {

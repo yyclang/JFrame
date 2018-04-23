@@ -69,9 +69,6 @@ public abstract class JBaseFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         logi("onCreateView------start");
         View fragmentView = onCreateFragmentView(inflater, container, savedInstanceState);
-//        if (isSupportStateLayout()) {
-//            fragmentView = wrapFragmentView(fragmentView);
-//        }
         logi("onCreateView------end");
         return fragmentView;
     }
@@ -80,11 +77,6 @@ public abstract class JBaseFragment extends Fragment {
      * {@link JBaseFragment#onCreateView(LayoutInflater, ViewGroup, Bundle)} 与其相同 只是用于父类JFragment中包装
      */
     protected abstract View onCreateFragmentView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState);
-
-    //是否要开启多状态
-    protected boolean isSupportStateLayout() {
-        return false;
-    }
 
     //包装fragment，添加多状态
     protected View wrapFragmentView(View view) {

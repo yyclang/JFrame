@@ -18,4 +18,9 @@
         <item name="android:textSize">15dp</item>
     </style>
 
+    <style name="MyTaxDialogAnim">
+        <item name="android:windowEnterAnimation">@anim/tax_enter_anim</item>
+        <item name="android:windowExitAnimation">@anim/tax_exit_anim</item>
+    </style>
+
 </resources>

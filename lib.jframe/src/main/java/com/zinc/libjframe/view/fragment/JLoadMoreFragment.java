@@ -19,7 +19,7 @@ import com.zinc.libjframe.callback.IStateListener;
 /**
  * @author Jiang zinc
  * @date 创建时间：2018/4/22
- * @description
+ * @description 带上拉加载和刷新的fragment
  */
 
 public abstract class JLoadMoreFragment extends JListFragment {

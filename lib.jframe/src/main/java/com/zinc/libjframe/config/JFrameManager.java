@@ -22,6 +22,8 @@ public class JFrameManager {
         this.mLoadingViewLayout = R.layout.j_state_loading_view;
         this.mRetryViewLayout = R.layout.j_state_retry_view;
         this.mEmptyViewLayout = R.layout.j_state_empty_view;
+
+        this.mDialogAnim = R.style.JFrameDialogDefaultAnim;
     }
 
     //是否为debug模式
@@ -33,6 +35,9 @@ public class JFrameManager {
     private int mRetryViewLayout;
     //空内容的View的layout
     private int mEmptyViewLayout;
+
+    //dialog的默认动画
+    private int mDialogAnim;
 
     public boolean isDebug() {
         return mIsDebug;
@@ -64,5 +69,13 @@ public class JFrameManager {
 
     public void setEmptyViewLayout(int mEmptyViewLayout) {
         this.mEmptyViewLayout = mEmptyViewLayout;
+    }
+
+    public int getDialogAnim() {
+        return mDialogAnim;
+    }
+
+    public void setDialogAnim(int mDialogAnim) {
+        this.mDialogAnim = mDialogAnim;
     }
 }
