@@ -18,7 +18,20 @@ import com.zinc.libpermission.bean.DenyInfo;
 import com.zinc.libpermission.utils.JPermissionHelper;
 import com.zinc.libpermission.utils.JPermissionUtil;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+
+    private OkHttpClient okHttpClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,8 +45,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //            }
 //        });
 
+
+        Intent intent = new Intent(this, ProxyService.class);
+        startService(intent);
+
+        okHttpClient = new OkHttpClient.Builder()
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(10, TimeUnit.SECONDS)
+                .writeTimeout(10, TimeUnit.SECONDS)
+                .proxy(
+                        new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 12580))
+                )
+                .build();
+
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
         findViewById(R.id.tv_fragment_demo).setOnClickListener(this);
         findViewById(R.id.tv_toolbar).setOnClickListener(this);
+        findViewById(R.id.tv_test_proxy).setOnClickListener(this);
+
 
     }
 
@@ -43,12 +78,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()) {
             case R.id.tv_fragment_demo:
                 intent = new Intent(this, FragmentMainActivity.class);
+                startActivity(intent);
                 break;
             case R.id.tv_toolbar:
                 intent = new Intent(this, ToolbarDemoActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.tv_test_proxy:
+                Request request = new Request.Builder().url("https://www.baidu.com").build();
+                Call call = okHttpClient.newCall(request);
+                call.enqueue(new Callback() {
+
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        Log.i("PROXY", "success");
+                    }
+                });
                 break;
         }
-        startActivity(intent);
     }
 
 

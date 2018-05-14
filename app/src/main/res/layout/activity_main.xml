@@ -16,5 +16,10 @@
         android:text="前往带有toolbar的activity"
         />
 
+    <TextView
+        android:id="@+id/tv_test_proxy"
+        style="@style/ItemRoundStyle"
+        android:text="测试代理"
+        />
 
 </LinearLayout>

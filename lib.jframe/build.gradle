@@ -35,4 +35,6 @@ dependencies {
     compile 'com.github.zincPower:JRecycleview:0.1.2'
     compile 'com.github.zincPower:JPermission:0.1'
 
+    compile 'com.squareup.okhttp3:okhttp:3.10.0'
+
 }
