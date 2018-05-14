@@ -33,6 +33,7 @@ import com.zinc.libjframe.R;
 import com.zinc.libjframe.config.JFrameManager;
 import com.zinc.libjframe.config.JWebViewManager;
 import com.zinc.libjframe.content.OkHttpApplication;
+import com.zinc.libjframe.test.ProxySettings;
 import com.zinc.libjframe.view.fragment.JBaseFragment;
 
 import java.io.File;
@@ -84,6 +85,11 @@ public class JWebViewFragment extends JBaseFragment {
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
     protected void initArgs(Bundle arguments) {
         super.initArgs(arguments);
 
@@ -100,29 +106,27 @@ public class JWebViewFragment extends JBaseFragment {
     protected void initView(View view) {
         this.mWebView = view.findViewById(R.id.webview);
 
-        initWebViewSetting(this.mWebView.getSettings());
+//        initWebViewSetting(this.mWebView.getSettings());
+//        initWebView(this.mWebView);
+
+        //支持javascript
+        mWebView.getSettings().setJavaScriptEnabled(true);
+// 设置可以支持缩放
+        mWebView.getSettings().setSupportZoom(true);
+// 设置出现缩放工具
+        mWebView.getSettings().setBuiltInZoomControls(true);
+//扩大比例的缩放
+        mWebView.getSettings().setUseWideViewPort(true);
+//自适应屏幕
+        mWebView.getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
+        mWebView.getSettings().setLoadWithOverviewMode(true);
 
         mWebView.setWebViewClient(new JWebViewClient());
         mWebView.setWebChromeClient(new JWebChromeClient());
 
-//        initWebView(this.mWebView);
+//        mUserAgent = mWebView.getSettings().getUserAgentString();
 
-//        //支持javascript
-//        mWebView.getSettings().setJavaScriptEnabled(true);
-//// 设置可以支持缩放
-//        mWebView.getSettings().setSupportZoom(true);
-//// 设置出现缩放工具
-//        mWebView.getSettings().setBuiltInZoomControls(true);
-////扩大比例的缩放
-//        mWebView.getSettings().setUseWideViewPort(true);
-////自适应屏幕
-//        mWebView.getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
-//        mWebView.getSettings().setLoadWithOverviewMode(true);
-
-//        this.mWebView.loadUrl(this.mUrl);
-
-        mUserAgent = mWebView.getSettings().getUserAgentString();
-
+//        ProxySettings.setProxy(mWebView,"127.0.0.1",12580, null);
         mWebView.loadUrl(this.mUrl, JWebViewManager.getInstance().getWebViewConfig().getHeader());
 
     }
@@ -256,7 +260,7 @@ public class JWebViewFragment extends JBaseFragment {
         }
 
         @Override
-        public WebResourceResponse shouldInterceptRequest(final WebView view, String url) {
+        public WebResourceResponse shouldInterceptRequest(final WebView view, final String url) {
             logi("shouldInterceptRequest: " + url);
 
             //如果小于21，即5.0
@@ -264,46 +268,9 @@ public class JWebViewFragment extends JBaseFragment {
 
                 Map<String, String> requestHeaders = new HashMap<>();
 
-//                final Thread thread = Thread.currentThread();
-//                final String[] currentUrl = new String[1];
-
-//                view.postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        logi("Get the WebView Url in Main Thread:" + view.getUrl());
-//                        currentUrl[0] = view.getUrl();
-//                        synchronized (thread) {
-//                            thread.notify();
-//                        }
-//                    }
-//                },100);
-
-//                synchronized (thread) {
-//                    try {
-//                        thread.wait();
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
-//
-//                }
-
-//                logi("Get the WebView Url in Child Thread:" + currentUrl[0]);
-
                 requestHeaders.put("User-Agent", mUserAgent);
 
-                WebResourceResponse webResourceResponse = null;
-                //如果html页面url就不进行代理
-                if (!htmlSet.contains(url)) {
-                    webResourceResponse = getWebResourceResponse(requestHeaders, url);
-                } else {
-                    logi("Pass the url:" + url);
-                }
-
-                if (webResourceResponse == null) {
-                    return super.shouldInterceptRequest(view, url);
-                } else {
-                    return webResourceResponse;
-                }
+                return getWebResourceResponse(requestHeaders, url);
 
             }
 
@@ -322,7 +289,7 @@ public class JWebViewFragment extends JBaseFragment {
             Call call = OkHttpApplication.getOkHttpClient().newCall(builder.build());
 
             //如果是ssl失败进行最多3次重试
-            for (int i = 0; i < 3; ++i) {
+//            for (int i = 0; i < 3; ++i) {
                 try {
                     Response response = call.execute();
 
@@ -331,12 +298,12 @@ public class JWebViewFragment extends JBaseFragment {
                             , "UTF-8", response.body().byteStream());
 
                 } catch (SSLProtocolException e) {
-                    logi("SSL Exception. Reconnecting..... times:" + (i + 1));
+//                    logi("SSL Exception. Reconnecting..... times:" + (i + 1));
                 } catch (Exception e) {
                     e.printStackTrace();
-                    break;
+//                    break;
                 }
-            }
+//            }
 
 
             return null;
@@ -346,9 +313,9 @@ public class JWebViewFragment extends JBaseFragment {
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             super.onPageStarted(view, url, favicon);
             logi("onPageStarted: " + url);
-            synchronized (htmlSet) {
-                htmlSet.add(url);
-            }
+//            synchronized (htmlSet) {
+//                htmlSet.add(url);
+//            }
         }
 
         @Override

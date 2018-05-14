@@ -38,8 +38,8 @@ public class WebActivity extends JBaseActivity {
     protected void initView() {
 
 //        addLayerFragment(R.id.frame_layout_container, JWebViewFragment.newInstance("https://github.com/ReactiveX/RxJava"));
-        addLayerFragment(R.id.frame_layout_container, JWebViewFragment.newInstance("https://www.jianshu.com/u/9dfaf364d57f"));
-//        addLayerFragment(R.id.frame_layout_container, JWebViewFragment.newInstance("https://www.baidu.com"));
+//        addLayerFragment(R.id.frame_layout_container, JWebViewFragment.newInstance("https://www.jianshu.com/u/9dfaf364d57f"));
+        addLayerFragment(R.id.frame_layout_container, JWebViewFragment.newInstance("https://www.baidu.com"));
 
     }
 
