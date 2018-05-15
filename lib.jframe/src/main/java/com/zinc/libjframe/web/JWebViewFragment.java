@@ -13,6 +13,7 @@ import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.FragmentManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,6 +37,7 @@ import com.zinc.libjframe.content.OkHttpApplication;
 import com.zinc.libjframe.test.ProxySettings;
 import com.zinc.libjframe.view.fragment.JBaseFragment;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -46,6 +48,8 @@ import java.net.Proxy;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -54,6 +58,7 @@ import javax.net.ssl.SSLProtocolException;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -65,6 +70,14 @@ import okhttp3.Response;
  */
 
 public class JWebViewFragment extends JBaseFragment {
+
+    private static final int RETRY_TIMES = 3;
+
+    //回车和换行
+    static final String CRLF = "\r\n";
+    static final String SPACE = " ";
+    static final String VERSION = "HTTP/1.1";
+    static final String COLON = ":";
 
     private static String TAG = JWebViewFragment.class.getSimpleName();
 
@@ -122,9 +135,9 @@ public class JWebViewFragment extends JBaseFragment {
         mWebView.getSettings().setLoadWithOverviewMode(true);
 
         mWebView.setWebViewClient(new JWebViewClient());
-        mWebView.setWebChromeClient(new JWebChromeClient());
+//        mWebView.setWebChromeClient(new JWebChromeClient());
 
-//        mUserAgent = mWebView.getSettings().getUserAgentString();
+        mUserAgent = mWebView.getSettings().getUserAgentString();
 
 //        ProxySettings.setProxy(mWebView,"127.0.0.1",12580, null);
         mWebView.loadUrl(this.mUrl, JWebViewManager.getInstance().getWebViewConfig().getHeader());
@@ -247,75 +260,156 @@ public class JWebViewFragment extends JBaseFragment {
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Override
         public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
-            logi("shouldInterceptRequest[5.0]: " + request.getUrl().toString());
 
-            WebResourceResponse webResourceResponse = getWebResourceResponse(request.getRequestHeaders(), request.getUrl().toString());
+            String url = request.getUrl().toString();
+            logi("shouldInterceptRequest[5.0]: " + url);
 
-            if (webResourceResponse == null) {
-                return super.shouldInterceptRequest(view, request);
-            } else {
-                return webResourceResponse;
+            synchronized (htmlSet) {
+                if (htmlSet.contains(url)) {
+                    logi("Pass url:" + url);
+                    return super.shouldInterceptRequest(view, request);
+                }
             }
 
+            Request.Builder builder = new Request.Builder().url(url);
+
+//            logi("=========================url start======================" + url);
+
+            for (Map.Entry<String, String> entry : request.getRequestHeaders().entrySet()) {
+                builder.addHeader(entry.getKey(), entry.getValue());
+//                logi("key:" + entry.getKey() + ";value:" + entry.getValue());
+            }
+
+//            logi("=========================url end======================" + url);
+            Call call = OkHttpApplication.getOkHttpClient().newCall(builder.build());
+
+            //如果是ssl失败进行最多3次重试
+            for (int i = 0; i < RETRY_TIMES; ++i) {
+                try {
+                    Response response = call.execute();
+
+                    Map<String, List<String>> map = response.headers().toMultimap();
+                    Map<String, String> resMap = new HashMap<>();
+
+                    for (Map.Entry<String, List<String>> entry : map.entrySet()) {
+                        List<String> value = entry.getValue();
+                        for (int j = 0; j < value.size(); ++j) {
+                            resMap.put(entry.getKey(), value.get(j));
+                        }
+                    }
+
+                    MediaType mediaType = response.body().contentType();
+
+                    return new WebResourceResponse(getMimeType(mediaType), getEncoding(mediaType),
+                            response.code(), response.message(), resMap, response.body().byteStream());
+
+
+//                    StringBuilder stringBuilder = new StringBuilder();
+//                    stringBuilder.append(VERSION);
+//                    stringBuilder.append(SPACE);
+//                    stringBuilder.append(response.code());
+//                    stringBuilder.append(SPACE);
+//                    stringBuilder.append(response.message());
+//                    stringBuilder.append(CRLF);
+//
+//                    for (Map.Entry<String, List<String>> entry : map.entrySet()) {
+//                        List<String> value = entry.getValue();
+//                        for (int j = 0; j < value.size(); ++j) {
+//                            stringBuilder.append(entry.getKey());
+//                            stringBuilder.append(COLON);
+//                            stringBuilder.append(SPACE);
+//                            stringBuilder.append(value.get(j));
+//                            stringBuilder.append(CRLF);
+//                        }
+//                    }
+//
+//                    stringBuilder.append(CRLF);
+//                    stringBuilder.append(response.body().byteStream());
+//                    stringBuilder.append(CRLF);
+//
+//                    InputStream is = new ByteArrayInputStream(stringBuilder.toString().getBytes());
+
+//                    return new WebResourceResponse(response.header("Content-Type").split(";")[0]
+//                            , "UTF-8", is);
+
+                } catch (SSLProtocolException e) {
+                    logi("SSL Exception. Reconnecting..... times:" + (i + 1));
+                } catch (IOException e) {
+                    logi("IOException. Reconnecting..... times:" + (i + 1));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    break;
+                }
+            }
+
+            return super.shouldInterceptRequest(view, request);
+
         }
+
 
         @Override
         public WebResourceResponse shouldInterceptRequest(final WebView view, final String url) {
             logi("shouldInterceptRequest: " + url);
 
+            synchronized (htmlSet) {
+                if (htmlSet.contains(url)) {
+                    logi("Pass url:" + url);
+                    return super.shouldInterceptRequest(view, url);
+                }
+            }
+
             //如果小于21，即5.0
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
 
-                Map<String, String> requestHeaders = new HashMap<>();
+                Request.Builder builder = new Request.Builder().url(url);
+                builder.addHeader("User-Agent", mUserAgent);
 
-                requestHeaders.put("User-Agent", mUserAgent);
+                Call call = OkHttpApplication.getOkHttpClient().newCall(builder.build());
 
-                return getWebResourceResponse(requestHeaders, url);
+                for (int i = 0; i < RETRY_TIMES; ++i) {
+                    try {
+                        Response response = call.execute();
+
+                        MediaType mediaType = response.body().contentType();
+
+                        return new WebResourceResponse(getMimeType(mediaType), getEncoding(mediaType), response.body().byteStream());
+                    } catch (SSLProtocolException e) {
+                        logi("SSL Exception. Reconnecting..... times:" + (i + 1));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        break;
+                    }
+                }
 
             }
 
             return super.shouldInterceptRequest(view, url);
         }
 
-        private WebResourceResponse getWebResourceResponse(Map<String, String> requestHeaders, String url) {
 
-            Request.Builder builder = new Request.Builder()
-                    .url(url);
-
-            for (Map.Entry<String, String> entry : requestHeaders.entrySet()) {
-                builder.addHeader(entry.getKey(), entry.getValue());
+        private String getMimeType(MediaType mediaType) {
+            String mimeType = null;
+            if (mediaType.type() != null && mediaType.subtype() != null) {
+                mimeType = mediaType.type() + "/" + mediaType.subtype();
             }
+            return mimeType;
+        }
 
-            Call call = OkHttpApplication.getOkHttpClient().newCall(builder.build());
-
-            //如果是ssl失败进行最多3次重试
-//            for (int i = 0; i < 3; ++i) {
-                try {
-                    Response response = call.execute();
-
-                    return new WebResourceResponse(
-                            MimeTypeMap.getSingleton().getMimeTypeFromExtension(MimeTypeMap.getFileExtensionFromUrl(url))
-                            , "UTF-8", response.body().byteStream());
-
-                } catch (SSLProtocolException e) {
-//                    logi("SSL Exception. Reconnecting..... times:" + (i + 1));
-                } catch (Exception e) {
-                    e.printStackTrace();
-//                    break;
-                }
-//            }
-
-
-            return null;
+        private String getEncoding(MediaType mediaType) {
+            String encoding = "UTF-8";
+            if (mediaType.charset() != null) {
+                encoding = mediaType.charset().name();
+            }
+            return encoding;
         }
 
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             super.onPageStarted(view, url, favicon);
             logi("onPageStarted: " + url);
-//            synchronized (htmlSet) {
-//                htmlSet.add(url);
-//            }
+            synchronized (htmlSet) {
+                htmlSet.add(url);
+            }
         }
 
         @Override
